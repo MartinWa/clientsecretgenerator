@@ -1,39 +1,21 @@
 ﻿using System;
-using System.Security.Cryptography;
-using System.Text;
+using IdentityServer4.Models;
 
 namespace clientsecretgenerator
 {
-    static class Program
+    internal class Program
     {
-        private static void Main()
+        private static void Main(string[] args)
         {
-            var guid = Guid.NewGuid().ToString();
-            var secret = guid.Sha256();
-            Console.WriteLine(guid);
-            Console.WriteLine(secret);
-        }
-    }
-
-    // Code taken from https://github.com/IdentityServer/IdentityServer3
-    internal static class Extensions
-    {
-        public static string Sha256(this string input)
-        {
-            if (input.IsMissing()) return string.Empty;
-
-            using (var sha = SHA256.Create())
+            var secret = Guid.NewGuid();
+            if (args.Length > 0)
             {
-                var bytes = Encoding.UTF8.GetBytes(input);
-                var hash = sha.ComputeHash(bytes);
-
-                return Convert.ToBase64String(hash);
+                Guid.TryParse(args[0], out secret);
             }
-        }
-
-        private static bool IsMissing(this string value)
-        {
-            return string.IsNullOrWhiteSpace(value);
+            var secretString = secret.ToString();
+            var hashString = secretString.Sha256();
+            Console.WriteLine(secretString);
+            Console.WriteLine(hashString);
         }
     }
 }
